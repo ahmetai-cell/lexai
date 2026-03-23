@@ -62,6 +62,15 @@ class Settings(BaseSettings):
     RATE_LIMIT_PER_MINUTE: int = 60
     RATE_LIMIT_PER_DAY: int = 2000
 
+    # Async Worker — S3 + SQS + Large File Pipeline
+    SQS_QUEUE_URL: str | None = None            # AWS SQS kuyruğu URL'si
+    SQS_DLQ_URL: str | None = None              # Dead Letter Queue URL'si
+    AWS_KMS_KEY_ID: str | None = None           # SSE-KMS anahtar ID (None → AES256)
+    WORKER_BATCH_SIZE: int = 50                 # Her batch'teki sayfa sayısı
+    WORKER_BATCH_TIMEOUT_SEC: int = 120         # Tek batch için maksimum süre
+    WORKER_VISIBILITY_TIMEOUT_SEC: int = 300    # SQS mesaj gizlilik süresi
+    LARGE_FILE_PAGE_THRESHOLD: int = 3000       # Bu üzeri async pipeline'a girer
+
     # Audit & Anomaly Detection
     SLACK_WEBHOOK_URL: str | None = None        # Boşsa Slack bildirimi atlanır
     ANOMALY_RATE_LIMIT: int = 100               # 1 saatte maksimum sorgu (RULE-1)
