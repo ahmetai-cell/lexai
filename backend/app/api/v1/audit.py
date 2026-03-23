@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 
 from app.api.v1.deps import get_current_user
-from app.db.session import get_session
+from app.api.v1.deps import get_tenant_db
 from app.models.audit_log import AuditLog
 from app.models.user import User, UserRole
 from app.services.audit_service import audit_service
@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/summary")
 async def get_audit_summary(
     days: int = Query(default=30, ge=1, le=365),
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     """Kullanım özeti – yalnızca ADMIN erişebilir."""
@@ -39,7 +39,7 @@ async def get_audit_summary(
 @router.get("/documents/{doc_id}")
 async def get_document_audit(
     doc_id: str,
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     """Belgeye kimin ne zaman eriştiğini göster."""
@@ -55,7 +55,7 @@ async def get_document_audit(
 @router.get("/hallucination-alerts")
 async def get_hallucination_alerts(
     days: int = Query(default=7, ge=1, le=90),
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     """Hallucination uyarısı alan sorguların listesi."""

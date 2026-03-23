@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.api.v1.deps import get_current_tenant, get_current_user
-from app.db.session import get_session
+from app.api.v1.deps import get_tenant_db
 from app.models.document import Document, DocumentStatus
 from app.models.user import User
 
@@ -16,7 +16,7 @@ router = APIRouter()
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
 async def upload_document(
     file: UploadFile = File(...),
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     """Belge yükle – S3 + Textract OCR iş kuyruğuna gönder."""
@@ -58,7 +58,7 @@ async def upload_document(
 
 @router.get("/")
 async def list_documents(
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
     page: int = 1,
     per_page: int = 20,
@@ -84,7 +84,7 @@ async def list_documents(
 @router.get("/{doc_id}")
 async def get_document(
     doc_id: str,
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(
@@ -103,7 +103,7 @@ async def get_document(
 @router.delete("/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_document(
     doc_id: str,
-    db: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_tenant_db),
     current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(

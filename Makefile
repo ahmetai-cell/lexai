@@ -42,6 +42,12 @@ test-unit: ## Sadece unit testleri
 test-int: ## Sadece integration testleri
 	docker compose exec backend pytest tests/integration/ -v
 
+eval-embedding: ## Embedding model kalite testi çalıştır (10 hukuki terim)
+	docker compose exec backend python scripts/evaluate_embedding.py
+
+test-rls: ## RLS izolasyon testlerini çalıştır
+	docker compose exec backend pytest tests/unit/test_rls_session.py -v
+
 # ── Kod Kalitesi ──────────────────────────────────
 lint: ## Kod kalitesi kontrol
 	docker compose exec backend ruff check app/
