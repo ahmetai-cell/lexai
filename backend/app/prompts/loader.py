@@ -30,7 +30,7 @@ class PromptRegistry:
         """Tüm prompt modüllerini import et ve şablonları kayıt et."""
         from app.prompts.document_analysis import contract_review, risk_assessment
         from app.prompts.document_analysis import clause_extraction, compliance_check, summary_generation
-        from app.prompts.document_analysis import version_comparison
+        from app.prompts.document_analysis import version_comparison, case_widget
         from app.prompts.legal_analysis import case_law_analysis, statute_interpretation
         from app.prompts.legal_analysis import precedent_comparison, legal_opinion
         from app.prompts.legal_analysis import financial_calculation, adversarial_simulation, deadline_tracker
@@ -42,9 +42,10 @@ class PromptRegistry:
         from app.prompts.presentation import case_summary, legal_brief
 
         modules = [
-            # Belge Analizi (6)
+            # Belge Analizi (7)
             contract_review, risk_assessment, clause_extraction,
             compliance_check, summary_generation, version_comparison,
+            case_widget,
             # Hukuki Analiz (7)
             case_law_analysis, statute_interpretation,
             precedent_comparison, legal_opinion,

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import auth, documents, chat, templates, health, audit, jobs
+from app.api.v1 import auth, documents, chat, templates, health, audit, jobs, analysis
 
 api_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_router.include_router(chat.router, prefix="/chat", tags=["Chat"])
 api_router.include_router(templates.router, prefix="/templates", tags=["Templates"])
 api_router.include_router(audit.router, prefix="/audit", tags=["Audit Trail"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["Async Jobs"])
+api_router.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
