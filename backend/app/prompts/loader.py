@@ -34,6 +34,7 @@ class PromptRegistry:
         from app.prompts.legal_analysis import case_law_analysis, statute_interpretation
         from app.prompts.legal_analysis import precedent_comparison, legal_opinion
         from app.prompts.legal_analysis import financial_calculation, adversarial_simulation, deadline_tracker
+        from app.prompts.legal_analysis import chain_of_thought
         from app.prompts.drafting_support import contract_drafting, petition_drafting
         from app.prompts.drafting_support import legal_letter, amendment_drafting
         from app.prompts.rag_system import system_prompt, context_injection, citation_prompt
@@ -48,6 +49,7 @@ class PromptRegistry:
             case_law_analysis, statute_interpretation,
             precedent_comparison, legal_opinion,
             financial_calculation, adversarial_simulation, deadline_tracker,
+            chain_of_thought,
             # Yazım Desteği (4)
             contract_drafting, petition_drafting, legal_letter, amendment_drafting,
             # RAG Sistem (6)

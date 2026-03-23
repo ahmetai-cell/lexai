@@ -23,6 +23,7 @@ from app.services.hallucination_guard import hallucination_guard
 from app.rag.citation_tracker import CitationTracker
 from app.rag.hybrid_retriever import hybrid_retriever
 from app.rag.citation_verifier import citation_verifier
+from app.llm.system_prompt_builder import system_prompt_builder
 
 logger = get_logger(__name__)
 
@@ -88,12 +89,18 @@ class RAGService:
         chunks_filtered += extra_filtered
 
         # ── 3. Prompt render ────────────────────────────────────────
-        messages, system_prompt = self.renderer.render(
+        messages, template_system = self.renderer.render(
             template=template,
             query=request.query,
             chunks=chunks,
             extra_vars=request.extra_vars,
             conversation_history=request.conversation_history or [],
+        )
+
+        # Katman 4: Global LexAI system prompt + CoT (gerekirse) ekle
+        system_prompt = system_prompt_builder.build(
+            template=template,
+            rendered_template_system=template_system or "",
         )
 
         # ── 4. Bedrock generation ───────────────────────────────────
@@ -188,12 +195,17 @@ class RAGService:
         # Pre-generation filtresi
         chunks, _ = hallucination_guard.filter_chunks(chunks)
 
-        messages, system_prompt = self.renderer.render(
+        messages, template_system = self.renderer.render(
             template=template,
             query=request.query,
             chunks=chunks,
             extra_vars=request.extra_vars,
             conversation_history=request.conversation_history or [],
+        )
+
+        system_prompt = system_prompt_builder.build(
+            template=template,
+            rendered_template_system=template_system or "",
         )
 
         async for token in bedrock_service.stream(
