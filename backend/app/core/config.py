@@ -62,6 +62,14 @@ class Settings(BaseSettings):
     RATE_LIMIT_PER_MINUTE: int = 60
     RATE_LIMIT_PER_DAY: int = 2000
 
+    # Audit & Anomaly Detection
+    SLACK_WEBHOOK_URL: str | None = None        # Boşsa Slack bildirimi atlanır
+    ANOMALY_RATE_LIMIT: int = 100               # 1 saatte maksimum sorgu (RULE-1)
+    ANOMALY_OFF_HOURS_START: int = 2            # 02:00 UTC (RULE-2)
+    ANOMALY_OFF_HOURS_END: int = 6              # 06:00 UTC (RULE-2)
+    ANOMALY_DUPLICATE_MAX: int = 5              # 10 saniyede maksimum tekrar (RULE-4)
+    ANOMALY_DUPLICATE_WINDOW_SEC: int = 10      # Tekrar penceresi (RULE-4)
+
     # Logging
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: Literal["json", "text"] = "json"

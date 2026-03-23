@@ -22,6 +22,7 @@ services:
       - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/01_init.sql
       - ./infrastructure/postgres/pgvector_setup.sql:/docker-entrypoint-initdb.d/02_pgvector.sql
       - ./infrastructure/postgres/rls_setup.sql:/docker-entrypoint-initdb.d/03_rls.sql
+      - ./infrastructure/postgres/audit_immutability.sql:/docker-entrypoint-initdb.d/04_audit.sql
     ports:
       - "5432:5432"
     networks:

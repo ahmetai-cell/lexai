@@ -24,6 +24,7 @@ from app.rag.citation_tracker import CitationTracker
 from app.rag.hybrid_retriever import hybrid_retriever
 from app.rag.citation_verifier import citation_verifier
 from app.llm.system_prompt_builder import system_prompt_builder
+from app.audit.audit_service import audit_service
 
 logger = get_logger(__name__)
 
@@ -37,6 +38,10 @@ class RAGRequest:
     document_ids: list[str] | None = None
     conversation_history: list[dict] | None = None
     extra_vars: dict = field(default_factory=dict)
+    # Katman 5: middleware tarafından set edilir
+    ip_address: str | None = None
+    conversation_id: str | None = None
+    anomaly_events: list | None = None
 
 
 @dataclass
@@ -152,6 +157,27 @@ class RAGService:
             citation_errors=citation_report.error_count,
             total_citations=citation_report.total_citations,
         )
+
+        # ── 8. Immutable Audit Log (Katman 5) ────────────────────────
+        try:
+            await audit_service.log_rag_query(
+                db=db,
+                tenant_id=request.tenant_id,
+                user_id=request.user_id,
+                template_slug=request.template_slug,
+                document_ids=request.document_ids,
+                query_text=request.query,
+                chunks_retrieved=len(chunks),
+                response_generated=bool(citation_report.verified_answer),
+                confidence_score=guard_result.confidence_score,
+                hallucination_flag=guard_result.hallucination_flag,
+                conversation_id=request.conversation_id,
+                ip_address=request.ip_address,
+                anomaly_events=request.anomaly_events,
+            )
+        except Exception as audit_err:
+            # Audit hatası yanıtı engellememeli
+            logger.error("audit_log_failed", error=str(audit_err))
 
         return RAGResponse(
             # Nihai yanıt: hallucination temizlenmiş + citation uyarıları enjekte edilmiş

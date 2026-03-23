@@ -14,6 +14,7 @@ from app.db.session import engine
 from app.db.base import Base
 from app.middleware.error_handler import register_exception_handlers
 from app.middleware.tenant_middleware import TenantMiddleware
+from app.middleware.audit_middleware import AuditMiddleware
 from app.prompts.loader import prompt_registry
 
 
@@ -29,6 +30,8 @@ async def lifespan(app: FastAPI):
 
     # Cleanup
     await engine.dispose()
+    from app.core.redis import close_redis
+    await close_redis()
 
 
 app = FastAPI(
@@ -48,6 +51,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Audit & Anomaly Middleware ────────────────────
+app.add_middleware(AuditMiddleware)
 
 # ── Tenant Middleware ─────────────────────────────
 app.add_middleware(TenantMiddleware)
